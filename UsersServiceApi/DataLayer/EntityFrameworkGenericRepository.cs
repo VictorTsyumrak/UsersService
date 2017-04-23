@@ -18,6 +18,7 @@ namespace DataLayer
         }
 
         public IQueryable<TEntity> Items => DbSet.AsQueryable();
+        public int ContextHashCode => Context.GetHashCode();
 
         public TEntity Get(object id)
         {

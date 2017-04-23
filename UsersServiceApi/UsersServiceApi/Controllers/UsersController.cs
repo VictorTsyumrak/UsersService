@@ -1,12 +1,9 @@
 ﻿using System;
-using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
 using BusinessLayer.Services.Interfaces;
-using DataLayer;
-using DataLayer.Models;
 using DTO;
 
 namespace UsersServiceApi.Controllers
@@ -14,14 +11,10 @@ namespace UsersServiceApi.Controllers
     [RoutePrefix("api/users")]
     public class UsersController : ApiController
     {
-        private readonly IRepository<User> _usersRepository;
-        private readonly IRepository<Company> _companiesRepository;
         private readonly IUsersService _usersService;
 
-        public UsersController(IRepository<User> usersRepository, IRepository<Company> companiesRepository, IUsersService usersService)
+        public UsersController(IUsersService usersService)
         {
-            _usersRepository = usersRepository;
-            _companiesRepository = companiesRepository;
             _usersService = usersService;
         }
 
@@ -40,33 +33,24 @@ namespace UsersServiceApi.Controllers
         [Route("")]
         public async Task<HttpResponseMessage> Get()
         {
-            var userEntities = await _usersService.GetAllUsersAsync();
-            if (userEntities != null && userEntities.Any())
-            {
-               return Request.CreateResponse(HttpStatusCode.OK, userEntities);
-            }
+            var userEntities = await _usersService.GetAllUsersAsync(); 
 
-            return Request.CreateErrorResponse(HttpStatusCode.NotFound, $"Requested users not found");
+            return Request.CreateResponse(HttpStatusCode.OK, userEntities);
         }
 
         [Route("")]
         public async Task<HttpResponseMessage> Post([FromBody] UserEntity userEntity)
         {
-            if (Equals(_usersRepository.Context, _companiesRepository.Context))
+            var userId = await _usersService.AddUserAsync(userEntity);
+            if (userId != 0)
             {
-                var userId = await _usersService.AddUserAsync(userEntity);
-                if (userId != 0)
-                {
-                    var responseMessage = new HttpResponseMessage(HttpStatusCode.Created);
-                    responseMessage.Headers.Location = new Uri($"{Request.RequestUri}/{userId}");
+                var responseMessage = new HttpResponseMessage(HttpStatusCode.Created);
+                responseMessage.Headers.Location = new Uri($"{Request.RequestUri}/{userId}");
 
-                    return responseMessage;
-                }
-
-                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "User can't be created");
+                return responseMessage;
             }
 
-            return Request.CreateErrorResponse(HttpStatusCode.Conflict, string.Empty);
+            return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "User can't be created");
         }
 
         [Route("{id:int}")]

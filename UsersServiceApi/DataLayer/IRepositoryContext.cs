@@ -8,5 +8,6 @@ namespace DataLayer
         DbContext Context { get; set; }
         void SaveChanges();
         Task SaveChangesAsync();
+        int ContextHashCode { get; }
     }
 }
