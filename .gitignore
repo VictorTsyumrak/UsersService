@@ -1,18 +1,7 @@
+*/\.vs/
+**/bin/
 
-UsersServiceApi/\.vs/
-UsersServiceApi/BusinessLayer/bin/
+**/obj/
 
-UsersServiceApi/BusinessLayer/obj/
-
-UsersServiceApi/DataLayer/bin/
-
-UsersServiceApi/DataLayer/obj/
-
-UsersServiceApi/DTO/bin/
-
-UsersServiceApi/DTO/obj/
-UsersServiceApi/packages/
-UsersServiceApi/UsersServiceApi/bin/
-UsersServiceApi/UsersServiceApi/obj/
-
-UsersServiceApi/UsersServiceApi/Logs/
+**/packages/
+**/Logs/
